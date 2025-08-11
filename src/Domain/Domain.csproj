@@ -10,7 +10,7 @@
         <PackageReference Include="FluentResults" Version="3.16.0" />
         <PackageReference Include="FluentValidation" Version="11.10.0" />
         <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="11.10.0" />
-        <PackageReference Include="IATec.Shared.Domain" Version="0.2.3" />
+        <PackageReference Include="IATec.Shared.Domain" Version="1.0.0" />
         <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.0"/>
     </ItemGroup>
 </Project>
