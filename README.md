@@ -24,9 +24,12 @@
 
 ## About the Project
 
-This repository is a **base template** for creating new .NET APIs following IATec standards. It comes pre-configured with:
+This repository is a **base template** for creating new .NET APIs following IATec standards, specialized for **PostgreSQL** databases. It comes pre-configured with:
 
 - Decoupled layered architecture (Domain, Application, Persistence, AntiCorruption, MessageQueue, CrossCutting, Api).
+- **PostgreSQL** database access with **Entity Framework Core**.
+- Separate **Read** and **Write** `DbContext` for CQRS-like separation, using **snake_case** naming conventions.
+- **EF Core Migrations** applied automatically outside `Local` environment.
 - API versioning.
 - Automatic documentation via **Scalar/OpenAPI**.
 - Health Checks with JSON response.
@@ -41,18 +44,21 @@ This repository is a **base template** for creating new .NET APIs following IATe
 
 ## Technologies and Stack
 
-| Technology | Version |
-|------------|--------|
-| .NET | 10.0 |
-| ASP.NET Core | 10.0.x |
-| Scalar.AspNetCore | 2.14.14 |
-| Microsoft.AspNetCore.OpenApi | 10.0.8 |
-| API Versioning (Asp.Versioning.Mvc) | 10.0.0 |
-| HealthChecks UI Client | 9.0.0 |
-| MediatR | 14.1.0 |
-| FluentValidation | 12.1.1 |
-| FluentResults | 4.0.0 |
-| IATec.Shared.* | As per `csproj` files |
+| Technology | Version | Package |
+|------------|--------|---------|
+| .NET | 10.0 | - |
+| ASP.NET Core | 10.0.x | - |
+| Scalar.AspNetCore | 2.14.14 | `Scalar.AspNetCore` |
+| Microsoft.AspNetCore.OpenApi | 10.0.8 | `Microsoft.AspNetCore.OpenApi` |
+| API Versioning (Asp.Versioning.Mvc) | 10.0.0 | `Asp.Versioning.Mvc` |
+| HealthChecks UI Client | 10.0.0 | `AspNetCore.HealthChecks.UI.Client` |
+| MediatR | 14.1.0 | `MediatR` |
+| FluentValidation | 12.1.1 | `FluentValidation`, `FluentValidation.DependencyInjectionExtensions` |
+| FluentResults | 4.0.0 | `FluentResults` |
+| EF Core | 10.0.8 | `Microsoft.EntityFrameworkCore`, `Microsoft.EntityFrameworkCore.Relational` |
+| Npgsql EF Core | 10.0.1 | `Npgsql.EntityFrameworkCore.PostgreSQL` |
+| EFCore Naming Conventions | 10.0.1 | `EFCore.NamingConventions` |
+| IATec.Shared.* | As per `csproj` files | `IATec.Shared.Api`, `IATec.Shared.Application`, `IATec.Shared.Domain`, `IATec.Shared.Behaviors`, `IATec.Shared.HttpClient` |
 
 ---
 
@@ -78,6 +84,7 @@ src/
 ## Prerequisites
 
 - [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) (or compatible higher version)
+- [PostgreSQL](https://www.postgresql.org/download/) 14+ (or Docker instance)
 - (Optional) Docker for building/publishing images
 - Editor of your choice (VS, VS Code, Rider)
 
@@ -98,7 +105,11 @@ cd {API_NAME}
 dotnet restore
 ```
 
-### 3. Run the API
+### 3. Configure the database
+
+Ensure PostgreSQL is running and create the database (`dbPeople_local` by default). Update `ServerReader`, `ServerWriter`, and credentials in `src/Api/appsettings.json` if needed.
+
+### 4. Run the API
 
 ```bash
 dotnet run --project src/Api/Api.csproj
@@ -129,7 +140,17 @@ Settings are located in `src/Api/appsettings.json` (and its environment override
       "Default": "Information"
     }
   },
-  "ConnectionStrings": {}
+  "PostgreSQL": {
+    "Database": "dbPeople_local",
+    "User": "postgres",
+    "Password": "",
+    "ServerReader": "localhost",
+    "ServerWriter": "localhost",
+    "Port": "5432"
+  },
+  "EntityFramework": {
+    "SensitiveDataLogging": true
+  }
 }
 ```
 
@@ -140,9 +161,54 @@ Settings are located in `src/Api/appsettings.json` (and its environment override
 | `TimeZone` | Application time zone | `"America/Sao_Paulo"` |
 | `Container` | Deployment/container metadata | Adjust `Name` and `ContainerId` according to your environment |
 | `Logging` | ASP.NET Core log level | `"Debug"`, `"Information"`, `"Warning"` |
-| `ConnectionStrings` | Database and service connection strings | `"DefaultConnection": "Server=..."` |
+| `PostgreSQL` | PostgreSQL connection settings | Change `Database`, `User`, `Password`, `ServerReader`, `ServerWriter`, `Port` |
+| `EntityFramework` | EF Core behavior | `SensitiveDataLogging: false` in Production |
 
 > **Tip:** Add new configuration sections in `src/Api/Configurations/Extensions/OptionsExtension.cs` for typed injection via `IOptions<T>`.
+
+---
+
+## Database (PostgreSQL)
+
+This template uses **Npgsql.EntityFrameworkCore.PostgreSQL** with **EFCore.NamingConventions** (snake_case).
+
+### Read / Write Separation
+
+Two `DbContext` instances are registered:
+
+| Context | Purpose | Tracking |
+|---------|---------|----------|
+| `ReadDataContext` | Queries and reads | `NoTrackingWithIdentityResolution` |
+| `WriteDataContext` | Commands and writes | Default tracking enabled |
+
+Both contexts use **snake_case** naming conventions and **sensitive data logging** based on `EntityFramework` settings.
+
+### Migrations
+
+Migrations are automatically applied when the environment is **not** `Local`:
+
+```csharp
+// src/Api/Configurations/Extensions/MigrationExtensions.cs
+if (app.Environment.EnvironmentName is "Local") return app;
+dataContext.Database.Migrate();
+```
+
+> **Tip:** During development (`Local`), apply migrations manually via CLI:
+>
+> ```bash
+> dotnet ef database update --project src/Persistence --startup-project src/Api
+> ```
+
+### Connection String Format
+
+The `PostgreSqlOption` class in the Persistence layer builds the connection string automatically:
+
+```csharp
+$"Host={server};Port={Port};Pooling=true;Database={Database};User Id={User};Password={Password}"
+```
+
+- `ServerReader` is used for `ReadDataContext`
+- `ServerWriter` is used for `WriteDataContext`
 
 ---
 
