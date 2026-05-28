@@ -585,7 +585,6 @@ dotnet add src/Domain.Tests package xunit.runner.visualstudio
 ### Basic Dockerfile example
 
 ```dockerfile
-# syntax=docker/dockerfile:1
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS base
 WORKDIR /app
 EXPOSE 8080
