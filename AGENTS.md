@@ -16,7 +16,7 @@ Clean Architecture / Vertical Slices with MediatR CQRS, PostgreSQL via EF Core.
 | CQRS | MediatR 14.1.0 |
 | Validation | FluentValidation 12.1.1 |
 | Result type | FluentResults 4.0.0 — handlers return `Result` / `Result<T>` |
-| API docs | `Scalar.AspNetCore` referenced in csproj, but **Swashbuckle is the running code** (`SwaggerExtension.cs`); `ScalarConfiguration.cs` does not exist |
+| API docs | **Scalar** via `ScalarConfiguration.cs` — UI at `/documentation`; OpenAPI JSON at `/openapi/v1.json` |
 
 ---
 
@@ -27,7 +27,7 @@ Clean Architecture / Vertical Slices with MediatR CQRS, PostgreSQL via EF Core.
 dotnet restore
 dotnet build IATec.Standard.Net.Api.sln
 
-# Run locally (port 5015, env=Local, opens /swagger)
+# Run locally (port 5015, env=Local, opens /documentation)
 dotnet run --project src/Api/Api.csproj
 
 # Run tests (no tests exist yet — projects are empty stubs)
@@ -95,9 +95,9 @@ secrets/            # Kubernetes Secret template with unfilled placeholders
 - Collections exposed as `IReadOnlyCollection<T>` backed by private `List<T>`.
 
 ### Environments
-- `Local` / `Development` — Swagger UI active at `/swagger`.
+- `Local` / `Development` — Scalar UI active at `/documentation`.
 - `Local` — auto-migration skipped.
-- `Production` — Swagger UI hidden.
+- `Production` — Scalar UI hidden (`!app.Environment.IsProduction()` guard in `ApiDependencyInjectionConfig.cs`).
 
 ---
 
@@ -107,10 +107,9 @@ secrets/            # Kubernetes Secret template with unfilled placeholders
 2. **CORS is fully open** (`AllowAnyOrigin/Method/Header`) — restrict before production.
 3. **No auth middleware** — `UseAuthentication()` / `UseAuthorization()` are not called; add explicitly if needed.
 4. **`LogServiceOption` and `ContainerOption` sections are missing from `appsettings.json`** — Log Service calls will fail silently (exceptions are swallowed).
-5. **`{API_NAME}` placeholders** remain in README and `secrets/secrets.yml` — replace when cloning as a new API.
+5. **`{API_NAME}` placeholders** remain in `ScalarConfiguration.cs`, README, and `secrets/secrets.yml` — replace when cloning as a new API.
 6. **No CI/CD** — no `.github/workflows/`, no Docker, no Kubernetes manifests ready to use.
-7. **Package versions in `.csproj` may lag behind what CHANGELOG/README claim** — always trust the `.csproj`, not the docs.
-8. **`Controllers/` is empty** — no endpoints exist; all feature handlers throw `NotImplementedException`.
+7. **`Controllers/` is empty** — no endpoints exist; all feature handlers throw `NotImplementedException`.
 
 ---
 
@@ -120,6 +119,7 @@ secrets/            # Kubernetes Secret template with unfilled placeholders
 - Replace namespaces across all `src/` projects.
 - Update `PostgreSQL.Database` in `appsettings.json`.
 - Update schema/table names in `PersonMapping.cs` / `DocumentMapping.cs`.
+- Replace `{API_NAME}` in `ScalarConfiguration.cs` (two occurrences).
 - Set `<Version>` to `1.0.0` in `Api.csproj`.
 - Add `LogServiceOption` and `ContainerOption` sections to `appsettings.json`.
 - Write `docker/Dockerfile` and `docker/Local.Dockerfile` (both are 0 bytes).
