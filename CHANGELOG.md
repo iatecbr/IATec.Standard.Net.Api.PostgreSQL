@@ -12,46 +12,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `README.md` — full template documentation: architecture, configuration, prerequisites, EF Core migrations guide, Docker, CI/CD, renaming guide, and Template Extension Points table.
 - `CHANGELOG.md` — full release history.
 - `AGENTS.md` — agent instruction file with developer commands, architecture conventions, persistence gotchas, and renaming checklist for OpenCode sessions.
+- `ScalarConfiguration.cs` — replaces `SwaggerExtension.cs`; wires `AddOpenApi()` and `MapScalarApiReference("/documentation")`.
 
 ### UPDATED
 
 - `Api.csproj` version bumped to `2.1.0`.
-- Applied package updates from `2.0.0` to `Api.csproj` (previously documented but not applied to the file): replaced `Swashbuckle.AspNetCore` with `Scalar.AspNetCore` `2.14.14`; `Asp.Versioning.Mvc` `8.1.1` → `10.0.0`; `Asp.Versioning.Mvc.ApiExplorer` `8.1.1` → `10.0.0`; `IATec.Shared.Api` `1.1.0` → `1.2.0`; `Microsoft.AspNetCore.OpenApi` `10.0.2` → `10.0.8`.
-
----
-
-## [2.0.0] — 2026-05-26
-
-### ADDED
-
-- `ExceptionPipelineBehavior` from `IATec.Shared.Behaviors` registered in MediatR pipeline alongside `ValidatorPipelineBehavior`.
-- `Microsoft.Extensions.Options` `10.0.8` added to `Application.csproj`.
-
-### UPDATED
-
-- **BREAKING:** Replaced `Swashbuckle.AspNetCore` with `Scalar.AspNetCore` `2.14.14`. Removed `SwaggerExtension.cs` and all Swagger configuration.
-- **BREAKING:** `IATec.Shared.Application` `1.1.0` → `2.0.0`.
-- **BREAKING:** `IATec.Shared.Domain` `1.2.0` → `2.0.1`.
-- **BREAKING:** `IATec.Shared.Behaviors` `1.2.0` → `1.3.0`.
-- **BREAKING:** `IATec.Shared.HttpClient` `2.1.0` → `3.0.0`.
-- **BREAKING:** `CreateAssetCommand` and `CheckIfExistsAssetQuery` converted from `sealed class` to `readonly record struct`.
-- `IATec.Shared.Api` `1.1.0` → `1.2.0`.
-- `Microsoft.AspNetCore.OpenApi` `10.0.1` → `10.0.8`.
-- `Asp.Versioning.Mvc` `8.1.1` → `10.0.0`.
-- `Asp.Versioning.Mvc.ApiExplorer` `8.1.1` → `10.0.0`.
-- `Microsoft.Extensions.DependencyInjection.Abstractions` `10.0.1` → `10.0.8`.
-- `Microsoft.Extensions.Http` `10.0.1` → `10.0.8`.
-- `Microsoft.Extensions.Configuration` `10.0.1` → `10.0.8`.
-- `Microsoft.Extensions.Configuration.Binder` `10.0.1` → `10.0.8`.
-- `launchUrl` in `launchSettings.json` changed from `swagger` to `documentation`.
-
-### FIXED
-
+- Applied package updates merged from upstream (`IATec.Standard.Net.Api` `2.0.0`):
+  - Replaced `Swashbuckle.AspNetCore` with `Scalar.AspNetCore` `2.14.14` + `Microsoft.AspNetCore.OpenApi` `10.0.8`.
+  - `IATec.Shared.Application` `1.1.0` → `2.0.0`.
+  - `IATec.Shared.Domain` `1.2.0` → `2.0.1`.
+  - `IATec.Shared.Behaviors` `1.2.0` → `1.3.0`.
+  - `IATec.Shared.HttpClient` `2.1.0` → `3.0.0`.
+  - `MediatR` `14.0.0` → `14.1.0`.
+  - `Microsoft.Extensions.DependencyInjection.Abstractions` `10.0.1` → `10.0.8`.
+  - `Microsoft.Extensions.Http` `10.0.1` → `10.0.8`.
+  - `Microsoft.Extensions.Configuration` `10.0.2` → `10.0.8`.
+  - `Microsoft.Extensions.Configuration.Binder` `10.0.2` → `10.0.8`.
+  - `Microsoft.Extensions.Options` `10.0.8` added to `Application.csproj`.
+  - `Asp.Versioning.Mvc` `8.1.1` → `10.0.0`; `Asp.Versioning.Mvc.ApiExplorer` `8.1.1` → `10.0.0`.
+  - `IATec.Shared.Api` `1.1.0` → `1.2.0`.
+  - `launchUrl` in `launchSettings.json` changed from `swagger` to `documentation`.
+- `ApiDependencyInjectionConfig.cs` — replaced `AddSwagger()`/`UseApiSwagger()` with `AddOpenApiConfig()`/`ConfigureOpenApi()`; Scalar UI now guarded by `!IsProduction()`.
+- `CreateAssetCommand` and `CheckIfExistsAssetQuery` converted from `sealed class` to `readonly record struct`.
 - `LogDispatcher.cs`: `Content = content?.ToString()!` replaced with `Content = content?.ToString() ?? string.Empty`.
 
 ### REMOVED
 
-- `Swashbuckle.AspNetCore` package and `SwaggerExtension.cs`.
+- `SwaggerExtension.cs` — replaced by `ScalarConfiguration.cs`.
 
 ---
 
