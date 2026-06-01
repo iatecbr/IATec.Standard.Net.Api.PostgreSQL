@@ -118,7 +118,7 @@ IATec.Standard.Net.Api.PostgreSQL/
 │   │   │       ├── HealthCheckExtension.cs
 │   │   │       ├── MigrationExtensions.cs
 │   │   │       ├── OptionsExtension.cs
-│   │   │       ├── ScalarConfiguration.cs
+│   │   │       ├── ScalarExtension.cs
 │   │   │       └── VersioningExtension.cs
 │   │   ├── Controllers/
 │   │   │   └── (empty folder)
@@ -412,7 +412,7 @@ JWT Bearer setup is not present. To add JWT authentication:
 1. Install `Microsoft.AspNetCore.Authentication.JwtBearer`.
 2. Configure token validation in `ApiDependencyInjectionConfig.cs` or a new extension method.
 3. Add `app.UseAuthentication()` before `app.UseAuthorization()` in `UseApi()`.
-4. Add security schemes to the OpenAPI document in `ScalarConfiguration.cs`.
+4. Add security schemes to the OpenAPI document in `ScalarExtension.cs`.
 
 ---
 
@@ -650,7 +650,7 @@ Or keep simplified namespaces (`Api`, `Application`, `Domain`, etc.).
 
 ### 3. Scalar / OpenAPI title
 
-In `src/Api/Configurations/Extensions/ScalarConfiguration.cs`, replace `{API_NAME}` with the actual project name.
+In `src/Api/Configurations/Extensions/ScalarExtension.cs`, replace `{API_NAME}` with the actual project name.
 
 ### 4. Database and schema names
 
@@ -680,7 +680,7 @@ This project is an **intentional scaffold/template**. The following items are **
 | 6 | Empty Dockerfiles | `docker/` | Add build/publish steps for containerization |
 | 7 | Permissive CORS | `CorsPolicyExtension.cs` | Restrict origins/methods when deploying to production |
 | 8 | No authentication | `ApiDependencyInjectionConfig.cs` | Add JWT/Auth when security requirements are defined |
-| 9 | `{API_NAME}` placeholders | `ScalarConfiguration.cs`, README | Rename when cloning template |
+| 9 | `{API_NAME}` placeholders | `ScalarExtension.cs`, README | Rename when cloning template |
 | 10 | No `appsettings.Development.json` | `src/Api/` | Create environment-specific configs as needed |
 | 11 | `People` domain model | `src/Domain/Models/People/` | Replace or extend with the actual domain aggregate of the new API |
 | 12 | `SensitiveDataLogging: true` | `appsettings.json` | Set to `false` before deploying to production |

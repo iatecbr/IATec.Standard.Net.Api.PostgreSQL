@@ -2,7 +2,7 @@ using Scalar.AspNetCore;
 
 namespace Api.Configurations.Extensions;
 
-public static class ScalarConfiguration
+public static class ScalarExtension
 {
     public static IServiceCollection AddOpenApiConfig(this IServiceCollection services)
     {

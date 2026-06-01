@@ -16,7 +16,7 @@ Clean Architecture / Vertical Slices with MediatR CQRS, PostgreSQL via EF Core.
 | CQRS | MediatR 14.1.0 |
 | Validation | FluentValidation 12.1.1 |
 | Result type | FluentResults 4.0.0 — handlers return `Result` / `Result<T>` |
-| API docs | **Scalar** via `ScalarConfiguration.cs` — UI at `/documentation`; OpenAPI JSON at `/openapi/v1.json` |
+| API docs | **Scalar** via `ScalarExtension.cs` — UI at `/documentation`; OpenAPI JSON at `/openapi/v1.json` |
 
 ---
 
@@ -107,7 +107,7 @@ secrets/            # Kubernetes Secret template with unfilled placeholders
 2. **CORS is fully open** (`AllowAnyOrigin/Method/Header`) — restrict before production.
 3. **No auth middleware** — `UseAuthentication()` / `UseAuthorization()` are not called; add explicitly if needed.
 4. **`LogServiceOption` and `ContainerOption` sections are missing from `appsettings.json`** — Log Service calls will fail silently (exceptions are swallowed).
-5. **`{API_NAME}` placeholders** remain in `ScalarConfiguration.cs`, README, and `secrets/secrets.yml` — replace when cloning as a new API.
+5. **`{API_NAME}` placeholders** remain in `ScalarExtension.cs`, README, and `secrets/secrets.yml` — replace when cloning as a new API.
 6. **No CI/CD** — no `.github/workflows/`, no Docker, no Kubernetes manifests ready to use.
 7. **`Controllers/` is empty** — no endpoints exist; all feature handlers throw `NotImplementedException`.
 
@@ -119,7 +119,7 @@ secrets/            # Kubernetes Secret template with unfilled placeholders
 - Replace namespaces across all `src/` projects.
 - Update `PostgreSQL.Database` in `appsettings.json`.
 - Update schema/table names in `PersonMapping.cs` / `DocumentMapping.cs`.
-- Replace `{API_NAME}` in `ScalarConfiguration.cs` (two occurrences).
+- Replace `{API_NAME}` in `ScalarExtension.cs` (two occurrences).
 - Set `<Version>` to `1.0.0` in `Api.csproj`.
 - Add `LogServiceOption` and `ContainerOption` sections to `appsettings.json`.
 - Write `docker/Dockerfile` and `docker/Local.Dockerfile` (both are 0 bytes).

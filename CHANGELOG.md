@@ -12,7 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `README.md` — full template documentation: architecture, configuration, prerequisites, EF Core migrations guide, Docker, CI/CD, renaming guide, and Template Extension Points table.
 - `CHANGELOG.md` — full release history.
 - `AGENTS.md` — agent instruction file with developer commands, architecture conventions, persistence gotchas, and renaming checklist for OpenCode sessions.
-- `ScalarConfiguration.cs` — replaces `SwaggerExtension.cs`; wires `AddOpenApi()` and `MapScalarApiReference("/documentation")`.
+- `ScalarExtension.cs` — replaces `SwaggerExtension.cs`; wires `AddOpenApi()` and `MapScalarApiReference("/documentation")`.
 
 ### UPDATED
 
@@ -38,7 +38,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### REMOVED
 
-- `SwaggerExtension.cs` — replaced by `ScalarConfiguration.cs`.
+- `SwaggerExtension.cs` — replaced by `ScalarExtension.cs`.
 
 ---
 
